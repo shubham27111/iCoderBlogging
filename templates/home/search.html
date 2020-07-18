@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Results{% endblock title %}
+{% block blogactive %}active{% endblock blogactive %}
+
+{% block body %}
+
+<div class="container my-3">
+  <h3>Search Results:</h3>
+  {% comment %} {% if posts|length < 1 %}
+  <p>No Search Results:</p>
+  <div class="med card-section">
+    <p aria-level="3" role="heading" style="padding-top:.33em">Your search - <em><b>{{query}}</b></em> - did not match
+      any documents.</p>
+    <p style="margin-top:1em">Suggestions:</p>
+    <ul style="margin-left:1.3em;margin-bottom:2em">
+      <li>Make sure that all words are spelled correctly.</li>
+      <li>Try different keywords.</li>
+      <li>Try more general keywords.</li>
+      <li>Try fewer keywords.</li>
+    </ul>
+  </div>
+  {% endif %} {% endcomment %}
+  {% for post in posts  %}
+  <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+    <div class="col p-4 d-flex flex-column position-static">
+      <strong class="d-inline-block mb-2 text-primary">Article by {{post.author}}</strong>
+      <h3 class="mb-0">{{post.title}}</h3>
+      <div class="mb-1 text-muted">{{post.timeStamp}}</div>
+      <p class="card-text mb-auto">{{post.content|truncatechars:500}}</p>
+      <div class='my-2'>
+        <a href="/blog/{{post.slug}}" role='button' class="btn btn-secondary">Continue reading</a>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p>No Search Results:</p>
+  <div class="med card-section">
+    <p aria-level="3" role="heading" style="padding-top:.33em">Your search - <em><b>{{query}}</b></em> - did not match
+      any documents.</p>
+    <p style="margin-top:1em">Suggestions:</p>
+    <ul style="margin-left:1.3em;margin-bottom:2em">
+      <li>Make sure that all words are spelled correctly.</li>
+      <li>Try different keywords.</li>
+      <li>Try more general keywords.</li>
+      <li>Try fewer keywords.</li>
+    </ul>
+  </div>
+  {% comment %} yha hm ye empty vala tag use kr rha h magar hmjo if upar comment kr rakha h vo vhi us ekr sakta h vo bhi
+  bilkul sahi h {% endcomment %}
+  {% endfor %}
+
+  <footer class="container">
+        <p class="float-right"><a href="#">Back to top</a></p>
+        <p>© 2020-2021 iCoder, Inc. · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+      </footer>
+
+  {% endblock body %}

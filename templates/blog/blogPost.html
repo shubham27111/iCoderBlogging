@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Blog Post{% endblock title %}
+{% block blogactive %}active{% endblock blogactive %}
+{% block body %}
+{% load humanize %}
+{% load extras %}
+<div class="container my-3">
+  <h2 class="blog-post-title">{{post.title}}</h2>
+  <p class="blog-post-meta">{{post.timeStamp}} <a href="/about">{{post.author}}</a> <span> (<b>{{post.views}}</b>
+      <em>views</em>)</span></p>
+  <p>{{post.content|safe}}</p>
+  <hr>
+</div>
+<div class="container">
+  <h2>Comments({{comments.count}})</h2>
+  <div class="my-2">
+    {% if user.is_authenticated %}
+    <form action="/blog/postComment" method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="exampleInputEmail1"><b>Post your Comment below :</b></label>
+        <input type="text" name='comment' class="form-control" placeholder="Enter your comment">
+      </div>
+      <input type="hidden" name='postSno' value="{{post.sno}}">
+      <input type="hidden" name='parentSno' value="">
+      <button type="submit" class="btn btn-secondary">Submit</button>
+    </form>
+    {% else %}
+    <p><em>Login to Post a comment</em></p>
+    {% endif %}
+  </div>
+  {% for comments in comments  %}
+  <div class="row my-3">
+    <div class="col-md-1">
+      <img src="/static/images/userImg.png" class="rounded w-50 mx-auto d-block " alt="user">
+    </div>
+    <div class="col-md-11"><em><b>{{comments.user.username  }} </b>
+        <span class="badge badge-secondary">{{comments.timeStamp| naturaltime}}</span></em>
+      <div> {{comments.comment}}
+      </div>
+      <div class="reply my-1">
+        {% if user.is_authenticated %}
+        <button class="btn btn-sm btn-secondary" type="button" data-toggle="collapse"
+          data-target="#reply{{comments.sno}}" aria-expanded="false" aria-controls="reply{{comments.sno}}">
+          Reply
+        </button>
+        <div class="collapse" id="reply{{comments.sno}}">
+          <div class="card card-body my-2">
+            <form action="/blog/postComment" method="post">
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="comment"><b>Post your reply below :</b></label>
+                <input type="text" name='comment' class="form-control" placeholder="Add your reply">
+                <input type="hidden" name='parentSno' value="{{comments.sno}}">
+              </div>
+              <input type="hidden" name='postSno' value="{{post.sno}}">
+              <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+          </div>
+        </div>
+        {% else %}
+        <button class="btn btn-sm btn-secondary" type="button" data-toggle="collapse"
+          data-target="#reply{{comments.sno}}" aria-expanded="false" aria-controls="reply{{comments.sno}}" disabled>
+          Reply
+        </button>
+        {% endif %}
+        <div class="replies my-2">
+          {% for reply  in repDict|get_val:comments.sno  %}
+          <div class="row my-2">
+            <div class="col-md-1">
+              <img src="/static/images/userImg.png" class="rounded w-25 mx-auto d-block my-2 " alt="user">
+            </div>
+            <div class="col-md-11"><em><b>{{reply.user.username  }} </b>
+                <span class="badge badge-secondary">{{reply.timeStamp| naturaltime}}</span></em>
+              <div> {{reply.comment}}
+              </div>
+            </div>
+            <br>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<footer class="container">
+        <p class="float-right"><a href="#">Back to top</a></p>
+        <p>© 2020-2021 iCoder, Inc. · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+      </footer>
+{% endblock body %}
